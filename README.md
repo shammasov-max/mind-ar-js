@@ -3,7 +3,7 @@ nodejs 20
 npm 10
 
 Установить от рута эти пакеты глобально:<br/>
-```npm i -g yarn ts-node typescript tsc```
+```npm i -g yarn ts-node typescript tsc @swc/core```
 
 
 
