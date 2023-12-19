@@ -1,3 +1,4 @@
+#!/usr/bin/env -S ts-node --transpile-only --swc
 import { program } from '@commander-js/extra-typings';
 import { OfflineCompiler } from '../image-target/offline-compiler.js';
 import * as Path from 'path'
@@ -63,26 +64,13 @@ const convertFilesWithManyCompilers = async (files: string[]) => {
     )
 }
 
-program.command('compile-from-scratch <files...>')
-    .addHelpText('afterAll',`ts-node ./src/cli/index.ts compile -p ./compile-from-scratch   ./1.jpg 2.jpg 3.jpg`)
-    .option('-o, --output <string>','Название результирующего файла','target.mind')
-    .requiredOption('-p, --path <basePath>', 'Базовый путь для чтения файлов изображений. mind файлов, и папка для результирующего target.mind файла')
-    .description(`С нуля конвертирует все изображения по порядку. в один mind файл`)
-    .action(async (files, {path='', output}) => {
-        const fullFiles =  files.map(f => Path.join(path, f))     // command-arguments and options are fully typed
-        const outputFile = Path.join(path, output)
-        await recompileFiles(fullFiles,outputFile)
-        // command-arguments and options are fully typed
-    });
+
 
 program.command('convert-to-minds <files...>')
     .addHelpText('afterAll',`ts-node ./src/cli/index.ts compile -p ./convert-to-minds    ./1.jpg 2.jpg 3.jpg`)
-
     .option('-s, --single-compiler', 'Использовать один компеилятор последовательно для всех картинок')
     .requiredOption('-p, --path <string>', 'title to use before name')
-    .description(`Конвертирует изображения в mind файлы, 
-    конвертированный файлы размещаются рядом с исходными, 
-    отличаются только расширением ".ming"`)
+    .description(`Конвертирует изображения в mind файлы, результаты размещаются рядом с изображениями, названиеФайла.mind`)
     .action(async (files, {path = '', singleCompiler}) => {
         console.log('files',files)
         console.log({path,singleCompiler})
@@ -104,5 +92,18 @@ program.command('build <files...>')
         const fullFiles =  files.map(f => Path.join(path, f))     // command-arguments and options are fully typed
         const outputFile = Path.join(path, output)
         await composeMindFiles(fullFiles, outputFile)
+    });
+
+
+program.command('compile-from-scratch <files...>')
+    .addHelpText('afterAll',`ts-node ./src/cli/index.ts compile -p ./compile-from-scratch   ./1.jpg 2.jpg 3.jpg`)
+    .option('-o, --output <string>','Название результирующего файла','target.mind')
+    .requiredOption('-p, --path <basePath>', 'Базовый путь для чтения файлов изображений. mind файлов, и папка для результирующего target.mind файла')
+    .description(`С нуля конвертирует все изображения по порядку. в один mind файл`)
+    .action(async (files, {path='', output}) => {
+        const fullFiles =  files.map(f => Path.join(path, f))     // command-arguments and options are fully typed
+        const outputFile = Path.join(path, output)
+        await recompileFiles(fullFiles,outputFile)
+        // command-arguments and options are fully typed
     });
 program.parse()
