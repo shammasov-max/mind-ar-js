@@ -67,8 +67,11 @@ class CompilerBase {
     });
   }
 
-  // not exporting imageList because too large. rebuild this using targetImage
-  exportData() {
+  get dataList() {
+    return this.getDataList()
+  }
+
+  getDataList() {
     const dataList = [];
     for (let i = 0; i < this.data.length; i++) {
       dataList.push({
@@ -81,11 +84,33 @@ class CompilerBase {
         matchingData: this.data[i].matchingData
       });
     }
-    const buffer = msgpack.encode({
-      v: CURRENT_VERSION,
-      dataList
-    });
-    return buffer;
+    return dataList
+  }
+  // not exporting imageList because too large. rebuild this using targetImage
+  exportData() {
+    const dataList = this.getDataList()
+    return compressDataList(dataList)
+  }
+
+  attachMindData(buffer) {
+    const content = msgpack.decode(new Uint8Array(buffer));
+    //console.log("import", content);
+
+    if (!content.v || content.v !== CURRENT_VERSION) {
+      console.error("Your compiled .mind might be outdated. Please recompile");
+      return [];
+    }
+    if(!this.data)
+      this.data = []
+    const { dataList } = content;
+    for (let i = 0; i < dataList.length; i++) {
+      this.data.push({
+        targetImage: dataList[i].targetImage,
+        trackingData: dataList[i].trackingData,
+        matchingData: dataList[i].matchingData
+      });
+    }
+    return this.data;
   }
 
   importData(buffer) {
@@ -151,6 +176,14 @@ const _extractMatchingFeatures = async (imageList, doneCallback) => {
     });
   }
   return keyframes;
+}
+
+export const compressDataList = (dataList) => {
+  const buffer = msgpack.encode({
+    v: CURRENT_VERSION,
+    dataList
+  });
+  return buffer;
 }
 
 export {
