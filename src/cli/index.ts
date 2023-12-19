@@ -1,4 +1,4 @@
-#!/usr/bin/env -S ts-node --transpile-only --swc
+#!/usr/bin/env -S ts-node --swc
 import { program } from '@commander-js/extra-typings';
 import { OfflineCompiler } from '../image-target/offline-compiler.js';
 import * as Path from 'path'
@@ -67,7 +67,7 @@ const convertFilesWithManyCompilers = async (files: string[]) => {
 
 
 program.command('convert-to-minds <files...>')
-    .addHelpText('afterAll',`ts-node ./src/cli/index.ts compile -p ./convert-to-minds    ./1.jpg 2.jpg 3.jpg`)
+    .addHelpText('afterAll',`/home/mind-ar-js/src/cli/index.ts convert-to-minds  -p "/home/mind-ar-js/images"  "1.jpg" "2.jpg" "3.jpg"`)
     .option('-s, --single-compiler', 'Использовать один компеилятор последовательно для всех картинок')
     .requiredOption('-p, --path <string>', 'title to use before name')
     .description(`Конвертирует изображения в mind файлы, результаты размещаются рядом с изображениями, названиеФайла.mind`)
@@ -83,7 +83,9 @@ program.command('convert-to-minds <files...>')
 
 
 program.command('build <files...>')
-    .addHelpText('afterAll',`ts-node ./src/cli/index.ts build -p ./images    ./1.mind 2.mind 3.mind`)
+    .addHelpText('afterAll',`ts-node ./src/cli/index.ts build -p "/home/mind-ar-js/images"    "1.mind" "2.mind" "3.mind"`)
+
+
     .option('-o, --output <string>','Название результирующего файла','target.mind')
     .requiredOption('-p, --path <string>', 'Базовый путь для сбора mind файлов, и папка для результирующего target.mind файла')
     .description(`Объёдиняет данные из mind файлов в один`)
